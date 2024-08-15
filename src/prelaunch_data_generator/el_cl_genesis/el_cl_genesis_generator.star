@@ -65,7 +65,8 @@ def generate_el_cl_genesis_data(
         store=[
             StoreSpec(src="/network-configs/validators.txt", name="validators_file"),
         ],
-)
+    )
+
     genesis = plan.run_sh(
         name="run-generate-genesis",
         description="Creating genesis",
