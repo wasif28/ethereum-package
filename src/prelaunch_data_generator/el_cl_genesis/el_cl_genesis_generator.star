@@ -60,9 +60,9 @@ def generate_el_cl_genesis_data(
             str(network_params.max_effective_balance) + "\"' | tr -d '\"' > validators.txt",
         image=ETH_VAL_TOOLS_IMAGE,
         files=files,
-        # store=[
-        #     StoreSpec(src="/network-configs/validators.txt", name="validators_file"),
-        # ],
+        store=[
+            StoreSpec(src="/network-configs/validators.txt", name="validators_file"),
+        ],
     )
 
     genesis = plan.run_sh(
