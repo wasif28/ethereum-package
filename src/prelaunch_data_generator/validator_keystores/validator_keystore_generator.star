@@ -89,7 +89,7 @@ def get_config(files_artifact_mountpoints):
     )
 
 def generate_extra_validators(plan, mnemonic, participants, max_effective_balance):
-    service_name = launch_generate_extra_validators(plan, {}, "validators_for_custom_amount")
+    service_name = launch_generate_extra_validators(plan, {}, "custom_amount")
     command_str = 'eth2-val-tools deposit-data --fork-version 0x00000000 --source-max {0} --source-min 0 --validators-mnemonic="{1}" --withdrawals-mnemonic="{1}" --as-json-list | jq \'.[] | "0x" + .pubkey + ":" + .withdrawal_credentials + ":{2}"\' | tr -d \'"\' > validators.txt'.format(
         participants,
         mnemonic,
