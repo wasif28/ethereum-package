@@ -32,6 +32,19 @@ ENTRYPOINT_ARGS = [
     "99999",
 ]
 
+def launch_generate_extra_validators_for_custom_amount(
+    plan,
+    files_artifact_mountpoints,
+    service_name_suffix
+);
+    config = get_config(files_artifact_mountpoints)
+    service_name = "{0}{1}".format(
+        SERVICE_NAME_PREFIX,
+        service_name_suffix,
+    )
+    plan.add_service(service_name, config)
+
+    return service_name
 
 # Launches a prelaunch data generator IMAGE, for use in various of the genesis generation
 def launch_prelaunch_data_generator(
@@ -74,6 +87,30 @@ def get_config(files_artifact_mountpoints):
         entrypoint=ENTRYPOINT_ARGS,
         files=files_artifact_mountpoints,
     )
+
+def generate_extra_validators_for_custom_amount(plan, mnemonic, participants, max_effective_balance);
+    service_name = launch_generate_extra_validators_for_custom_amount(plan, {}, "validators_for_custom_amount")
+    command_str = 'eth2-val-tools deposit-data --fork-version 0x00000000 --source-max {0} --source-min 0 --validators-mnemonic="{1}" --withdrawals-mnemonic="{1}" --as-json-list | jq \'.[] | "0x" + .pubkey + ":" + .withdrawal_credentials + ":{2}"\' | tr -d \'"\' > validators.txt'.format(
+        participants,
+        mnemonic,
+        max_effective_balance
+    )
+
+    command_result = plan.exec(
+        service_name=service_name,
+        description="Generating validators_for_custom_amount",
+        recipe=ExecRecipe(command=["sh", "-c", command_str]),
+    )
+    plan.verify(command_result["code"], "==", SUCCESSFUL_EXEC_CMD_EXIT_CODE)
+
+    # Store the validators.txt file as an artifact
+    artifact_name = plan.store_service_files(
+        service_name,
+        "/validators.txt",  # Path to the file within the service container
+        name="validators_file"
+    )
+
+    return artifact_name
 
 
 # Generates keystores for the given number of nodes from the given mnemonic, where each keystore contains approximately

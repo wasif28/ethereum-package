@@ -8,9 +8,6 @@ GENESIS_VALUES_PATH = "/opt"
 GENESIS_VALUES_FILENAME = "values.env"
 SHADOWFORK_FILEPATH = "/shadowfork"
 
-ETH_VAL_TOOLS_IMAGE = "protolambda/eth2-val-tools:latest"
-
-
 def generate_el_cl_genesis_data(
     plan,
     image,
@@ -19,6 +16,7 @@ def generate_el_cl_genesis_data(
     network_params,
     total_num_validator_keys_to_preregister,
     latest_block,
+    extra_validators_for_custom_amount_data,
 ):
     files = {}
     shadowfork_file = ""
@@ -48,22 +46,25 @@ def generate_el_cl_genesis_data(
 
     files[GENESIS_VALUES_PATH] = genesis_generation_config_artifact_name
 
-    generate_extra_validators_for_custom_amount = plan.run_sh(
-        name="run-generate-extra-validators-file",
-        description="Creating extra validators file with custom ETH deposit data (e.g., more than 32 ETH)",
-        run="eth2-val-tools deposit-data --fork-version 0x00000000 " +
-            "--source-max " + str(total_num_validator_keys_to_preregister) + " " +
-            "--source-min 0 " +
-            "--validators-mnemonic=" + str(network_params.preregistered_validator_keys_mnemonic) + " " +
-            "--withdrawals-mnemonic=" + str(network_params.preregistered_validator_keys_mnemonic) + " " +
-            "--as-json-list | jq '.[] | \"0x\" + .pubkey + \":\" + .withdrawal_credentials + \":" +
-            str(network_params.max_effective_balance) + "\"' | tr -d '\"' > validators.txt",
-        # image=ETH_VAL_TOOLS_IMAGE,
-        # files=files,
-        # store=[
-        #     StoreSpec(src="/network-configs/validators.txt", name="validators_file"),
-        # ],
-    )
+    plan.print("testing datatatatatatat")
+    plan.print(extra_validators_for_custom_amount_data)
+
+    # generate_extra_validators_for_custom_amount = plan.run_sh(
+    #     name="run-generate-extra-validators-file",
+    #     description="Creating extra validators file with custom ETH deposit data (e.g., more than 32 ETH)",
+    #     run="eth2-val-tools deposit-data --fork-version 0x00000000 " +
+    #         "--source-max " + str(total_num_validator_keys_to_preregister) + " " +
+    #         "--source-min 0 " +
+    #         "--validators-mnemonic=" + str(network_params.preregistered_validator_keys_mnemonic) + " " +
+    #         "--withdrawals-mnemonic=" + str(network_params.preregistered_validator_keys_mnemonic) + " " +
+    #         "--as-json-list | jq '.[] | \"0x\" + .pubkey + \":\" + .withdrawal_credentials + \":" +
+    #         str(network_params.max_effective_balance) + "\"' | tr -d '\"' > validators.txt",
+    #     # image=ETH_VAL_TOOLS_IMAGE,
+    #     # files=files,
+    #     # store=[
+    #     #     StoreSpec(src="/network-configs/validators.txt", name="validators_file"),
+    #     # ],
+    # )
 
     genesis = plan.run_sh(
         name="run-generate-genesis",

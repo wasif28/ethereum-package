@@ -31,6 +31,12 @@ def launch(plan, network_params, participants, parallel_keystore_generation):
             network_params.preregistered_validator_keys_mnemonic,
             participants,
         )
+    extra_validators_for_custom_amount_data = validator_keystores.generate_extra_validators_for_custom_amount(
+        plan,
+        network_params.preregistered_validator_keys_mnemonic,
+        participants,
+        network_params.max_effective_balance
+    )
 
     plan.print(json.indent(json.encode(validator_data)))
 
@@ -85,4 +91,5 @@ def launch(plan, network_params, participants, parallel_keystore_generation):
         ethereum_genesis_generator_image,
         final_genesis_timestamp,
         validator_data,
+        extra_validators_for_custom_amount_data,
     )
