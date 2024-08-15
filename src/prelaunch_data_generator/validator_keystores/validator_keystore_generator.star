@@ -90,7 +90,7 @@ def get_config(files_artifact_mountpoints):
 
 def generate_extra_validators(plan, mnemonic, participants, max_effective_balance):
     service_name = launch_generate_extra_validators(plan, {}, "custom-amount")
-     command_str = (
+    command_str = (
         '{0} deposit-data '
         '--fork-version 0x00000000 '
         '--source-max {1} '
