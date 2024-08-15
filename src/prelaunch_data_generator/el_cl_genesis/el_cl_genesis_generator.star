@@ -57,7 +57,7 @@ def generate_el_cl_genesis_data(
             "--validators-mnemonic=" + network_params.preregistered_validator_keys_mnemonic + " " +
             "--withdrawals-mnemonic=" + network_params.preregistered_validator_keys_mnemonic + " " +
             "--as-json-list | jq '.[] | \"0x\" + .pubkey + \":\" + .withdrawal_credentials + \":" +
-            + network_params.max_effective_balance + "\"' | " +
+            network_params.max_effective_balance + "\"' | " +
             "tr -d '\"' > validators.txt",
         image=ETH_VAL_TOOLS_IMAGE,
         files=files,
