@@ -34,7 +34,7 @@ def launch(plan, network_params, participants, parallel_keystore_generation):
     extra_validators_for_custom_amount_data = validator_keystores.generate_extra_validators(
         plan,
         network_params.preregistered_validator_keys_mnemonic,
-        participants,
+        num_participants,
         network_params.max_effective_balance
     )
 

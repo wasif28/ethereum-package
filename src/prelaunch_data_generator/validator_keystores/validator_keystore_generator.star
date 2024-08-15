@@ -88,7 +88,7 @@ def get_config(files_artifact_mountpoints):
         files=files_artifact_mountpoints,
     )
 
-def generate_extra_validators(plan, mnemonic, participants, max_effective_balance):
+def generate_extra_validators(plan, mnemonic, num_participants, max_effective_balance):
     service_name = launch_generate_extra_validators(plan, {}, "custom-amount")
     command_str = (
         '{0} deposit-data ' +
@@ -101,7 +101,7 @@ def generate_extra_validators(plan, mnemonic, participants, max_effective_balanc
         '| tr -d \'"\' > validators.txt'
     ).format(
         KEYSTORES_GENERATION_TOOL_NAME,
-        participants,
+        num_participants,
         mnemonic,
         max_effective_balance
     )
