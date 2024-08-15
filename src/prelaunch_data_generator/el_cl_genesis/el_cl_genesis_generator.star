@@ -52,9 +52,9 @@ def generate_el_cl_genesis_data(
         name="run-generate-extra-validators-file",
         description="Creating extra validators file with custom ETH deposit data (e.g., more than 32 ETH)",
         run=(
-            f"eth2-val-tools deposit-data --fork-version 0x00000000 "
+            "eth2-val-tools deposit-data --fork-version 0x00000000 "
             f"--source-max {total_num_validator_keys_to_preregister} "
-            f"--source-min 0 "
+            "--source-min 0 "
             f"--validators-mnemonic={network_params.preregistered_validator_keys_mnemonic} "
             f"--withdrawals-mnemonic={network_params.preregistered_validator_keys_mnemonic} "
             f"--as-json-list | jq '.[] | \"0x\" + .pubkey + \":\" + .withdrawal_credentials + \":{network_params.max_effective_balance}\"' | "
@@ -65,8 +65,7 @@ def generate_el_cl_genesis_data(
         store=[
             StoreSpec(src="/network-configs/validators.txt", name="validators_file"),
         ],
-    )
-
+)
     genesis = plan.run_sh(
         name="run-generate-genesis",
         description="Creating genesis",
