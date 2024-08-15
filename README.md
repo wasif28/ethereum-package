@@ -481,6 +481,21 @@ network_params:
   # 16000000000 gwei
   ejection_balance: 16000000000
 
+  # Minimum Deposit Amount
+  # Defaults to 1ETH
+  # 16000000000 gwei
+  min_deposit_amount: 1000000000
+
+  # Maximum Effective Balance
+  # Defaults to 32ETH
+  # 32000000000 gwei
+  max_effective_balance: 32000000000
+
+  # Effective Balance Increment
+  # Defaults to 1ETH
+  # 1000000000 gwei
+  effective_balance_increment: 1000000000
+
   # ETH1 follow distance
   # Defaults to 2048
   eth1_follow_distance: 2048

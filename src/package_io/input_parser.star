@@ -265,6 +265,9 @@ def input_parser(plan, input_args):
             ],
             churn_limit_quotient=result["network_params"]["churn_limit_quotient"],
             ejection_balance=result["network_params"]["ejection_balance"],
+            min_deposit_amount=result["network_params"]["min_deposit_amount"],
+            max_effective_balance=result["network_params"]["max_effective_balance"],
+            effective_balance_increment=result["network_params"]["effective_balance_increment"],
             eth1_follow_distance=result["network_params"]["eth1_follow_distance"],
             deneb_fork_epoch=result["network_params"]["deneb_fork_epoch"],
             electra_fork_epoch=result["network_params"]["electra_fork_epoch"],
@@ -786,6 +789,9 @@ def default_network_params():
         "max_per_epoch_activation_churn_limit": 8,
         "churn_limit_quotient": 65536,
         "ejection_balance": 16000000000,
+        "min_deposit_amount": 1000000000
+        "max_effective_balance": 32000000000
+        "effective_balance_increment": 1000000000
         "eth1_follow_distance": 2048,
         "min_validator_withdrawability_delay": 256,
         "shard_committee_period": 256,
@@ -819,6 +825,9 @@ def default_minimal_network_params():
         "max_per_epoch_activation_churn_limit": 4,
         "churn_limit_quotient": 32,
         "ejection_balance": 16000000000,
+        "min_deposit_amount": 1000000000
+        "max_effective_balance": 32000000000
+        "effective_balance_increment": 1000000000
         "eth1_follow_distance": 16,
         "min_validator_withdrawability_delay": 256,
         "shard_committee_period": 64,

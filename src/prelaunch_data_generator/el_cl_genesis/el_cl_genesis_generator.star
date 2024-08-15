@@ -8,6 +8,8 @@ GENESIS_VALUES_PATH = "/opt"
 GENESIS_VALUES_FILENAME = "values.env"
 SHADOWFORK_FILEPATH = "/shadowfork"
 
+ETH_VAL_TOOLS_IMAGE = "protolambda/eth2-val-tools:latest"
+
 
 def generate_el_cl_genesis_data(
     plan,
@@ -46,10 +48,29 @@ def generate_el_cl_genesis_data(
 
     files[GENESIS_VALUES_PATH] = genesis_generation_config_artifact_name
 
+    generate_extra_validators_for_custom_amount = plan.run_sh(
+        name="run-generate-extra-validators-file",
+        description="Creating extra validators file with custom ETH deposit data (e.g., more than 32 ETH)",
+        run=(
+            f"eth2-val-tools deposit-data --fork-version 0x00000000 "
+            f"--source-max {total_num_validator_keys_to_preregister} "
+            f"--source-min 0 "
+            f"--validators-mnemonic={network_params.preregistered_validator_keys_mnemonic} "
+            f"--withdrawals-mnemonic={network_params.preregistered_validator_keys_mnemonic} "
+            f"--as-json-list | jq '.[] | \"0x\" + .pubkey + \":\" + .withdrawal_credentials + \":{network_params.max_effective_balance}\"' | "
+            "tr -d '\"' > validators.txt"
+        ),
+        image=ETH_VAL_TOOLS_IMAGE,
+        files=files,
+        store=[
+            StoreSpec(src="/network-configs/validators.txt", name="validators_file"),
+        ],
+    )
+
     genesis = plan.run_sh(
         name="run-generate-genesis",
         description="Creating genesis",
-        run="cp /opt/values.env /config/values.env && ./entrypoint.sh all && mkdir /network-configs && mv /data/metadata/* /network-configs/",
+        run="export CL_ADDITIONAL_VALIDATORS='/network-configs/validators.txt' && cp /opt/values.env /config/values.env && ./entrypoint.sh all && mkdir /network-configs && mv /data/metadata/* /network-configs/",
         image=image,
         files=files,
         store=[
@@ -61,6 +82,7 @@ def generate_el_cl_genesis_data(
         ],
         wait=None,
     )
+
 
     genesis_validators_root = plan.run_sh(
         name="read-genesis-validators-root",
@@ -107,6 +129,9 @@ def new_env_file_for_el_cl_genesis_data(
         "MaxPerEpochActivationChurnLimit": network_params.max_per_epoch_activation_churn_limit,
         "ChurnLimitQuotient": network_params.churn_limit_quotient,
         "EjectionBalance": network_params.ejection_balance,
+        "MinDepositAmount": network_params.min_deposit_amount,
+        "MaxEffectiveBalance": network_params.max_effective_balance,
+        "EffectiveBalanceIncrement": network_params.effective_balance_increment,
         "Eth1FollowDistance": network_params.eth1_follow_distance,
         "DenebForkEpoch": network_params.deneb_fork_epoch,
         "ElectraForkEpoch": network_params.electra_fork_epoch,
