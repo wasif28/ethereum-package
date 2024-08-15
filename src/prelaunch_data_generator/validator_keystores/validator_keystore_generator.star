@@ -36,7 +36,7 @@ def launch_generate_extra_validators_for_custom_amount(
     plan,
     files_artifact_mountpoints,
     service_name_suffix
-);
+):
     config = get_config(files_artifact_mountpoints)
     service_name = "{0}{1}".format(
         SERVICE_NAME_PREFIX,
