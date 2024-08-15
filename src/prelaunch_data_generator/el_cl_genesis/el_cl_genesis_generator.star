@@ -58,11 +58,11 @@ def generate_el_cl_genesis_data(
             "--withdrawals-mnemonic=" + str(network_params.preregistered_validator_keys_mnemonic) + " " +
             "--as-json-list | jq '.[] | \"0x\" + .pubkey + \":\" + .withdrawal_credentials + \":" +
             str(network_params.max_effective_balance) + "\"' | tr -d '\"' > validators.txt",
-        image=ETH_VAL_TOOLS_IMAGE,
-        files=files,
-        store=[
-            StoreSpec(src="/network-configs/validators.txt", name="validators_file"),
-        ],
+        # image=ETH_VAL_TOOLS_IMAGE,
+        # files=files,
+        # store=[
+        #     StoreSpec(src="/network-configs/validators.txt", name="validators_file"),
+        # ],
     )
 
     genesis = plan.run_sh(
