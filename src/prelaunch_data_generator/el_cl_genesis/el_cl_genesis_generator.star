@@ -51,15 +51,15 @@ def generate_el_cl_genesis_data(
     generate_extra_validators_for_custom_amount = plan.run_sh(
         name="run-generate-extra-validators-file",
         description="Creating extra validators file with custom ETH deposit data (e.g., more than 32 ETH)",
-        run=(
+        run=
             "eth2-val-tools deposit-data --fork-version 0x00000000 "
-            f"--source-max {total_num_validator_keys_to_preregister} "
+            "--source-max " + str(total_num_validator_keys_to_preregister) + " "
             "--source-min 0 "
-            f"--validators-mnemonic={network_params.preregistered_validator_keys_mnemonic} "
-            f"--withdrawals-mnemonic={network_params.preregistered_validator_keys_mnemonic} "
-            f"--as-json-list | jq '.[] | \"0x\" + .pubkey + \":\" + .withdrawal_credentials + \":{network_params.max_effective_balance}\"' | "
-            "tr -d '\"' > validators.txt"
-        ),
+            "--validators-mnemonic=" + network_params.preregistered_validator_keys_mnemonic + " "
+            "--withdrawals-mnemonic=" + network_params.preregistered_validator_keys_mnemonic + " "
+            "--as-json-list | jq '.[] | \"0x\" + .pubkey + \":\" + .withdrawal_credentials + \":"
+            + network_params.max_effective_balance + "\"' | "
+            "tr -d '\"' > validators.txt",
         image=ETH_VAL_TOOLS_IMAGE,
         files=files,
         store=[
