@@ -62,9 +62,9 @@ def generate_el_cl_genesis_data(
             "cat /network-configs/validators.txt",
         image=ETH_VAL_TOOLS_IMAGE,
         files=files,
-        store=[
-            StoreSpec(src="/network-configs/validators.txt", name="validators_file"),
-        ],
+        # store=[
+        #     StoreSpec(src="/network-configs/validators.txt", name="validators_file"),
+        # ],
     )
 
     genesis = plan.run_sh(
