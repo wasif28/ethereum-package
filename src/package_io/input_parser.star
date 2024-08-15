@@ -789,9 +789,9 @@ def default_network_params():
         "max_per_epoch_activation_churn_limit": 8,
         "churn_limit_quotient": 65536,
         "ejection_balance": 16000000000,
-        "min_deposit_amount": 1000000000
-        "max_effective_balance": 32000000000
-        "effective_balance_increment": 1000000000
+        "min_deposit_amount": 1000000000,
+        "max_effective_balance": 32000000000,
+        "effective_balance_increment": 1000000000,
         "eth1_follow_distance": 2048,
         "min_validator_withdrawability_delay": 256,
         "shard_committee_period": 256,
