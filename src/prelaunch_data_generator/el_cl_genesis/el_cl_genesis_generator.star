@@ -47,14 +47,14 @@ def generate_el_cl_genesis_data(
     files[GENESIS_VALUES_PATH] = genesis_generation_config_artifact_name
 
     if extra_validators_for_custom_amount_data:
-        files["/network-configs/validators.txt"] = extra_validators_for_custom_amount_data
+        files["/tmp/validators.txt"] = extra_validators_for_custom_amount_data
 
     plan.print("TODO::::")
 
     genesis = plan.run_sh(
         name="run-generate-genesis",
         description="Creating genesis",
-        run="export CL_ADDITIONAL_VALIDATORS='/network-configs/validators.txt' && cp /opt/values.env /config/values.env && ./entrypoint.sh all && mkdir /network-configs && mv /data/metadata/* /network-configs/",
+        run="export CL_ADDITIONAL_VALIDATORS='/tmp/validators.txt' && cp /opt/values.env /config/values.env && ./entrypoint.sh all && mkdir /network-configs && mv /data/metadata/* /network-configs/",
         image=image,
         files=files,
         store=[
