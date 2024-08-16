@@ -47,7 +47,7 @@ def generate_el_cl_genesis_data(
     files[GENESIS_VALUES_PATH] = genesis_generation_config_artifact_name
 
     if extra_validators_for_custom_amount_data:
-        files["/tmp/validators.txt"] = extra_validators_for_custom_amount_data
+        files["/tmp"] = extra_validators_for_custom_amount_data
 
     plan.print("TODO::::")
 
