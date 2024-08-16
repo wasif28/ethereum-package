@@ -126,7 +126,7 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
     # Extract raw JSON output from result
     raw_output = read_result.get("stdout", "")
     if not raw_output:
-        ValueError("Error: stdout key not found in command result")
+        throw ValueError("Error: stdout key not found in command result")
 
     # Format the JSON data
     formatted_lines = []
@@ -142,7 +142,7 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
 
     # Write formatted data to a file
     formatted_data = "\n".join(formatted_lines)
-    write_command_str = f"echo '{formatted_data}' > /validators.txt"
+    write_command_str = "echo '{formatted_data}' > /validators.txt"
     write_result = plan.exec(
         service_name=service_name,
         description="Writing formatted validators to file",
