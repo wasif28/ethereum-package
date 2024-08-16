@@ -90,14 +90,15 @@ def get_config(files_artifact_mountpoints):
 
 def generate_extra_validators(plan, mnemonic, num_participants, max_effective_balance):
     service_name = launch_generate_extra_validators(plan, {}, "custom-amount")
-    # Command to generate JSON data and redirect to a file
+
+    # Command to generate the JSON file with validators data
     command_str = (
-        '{0} deposit-data ' +
-        '--fork-version 0x00000000 ' +
-        '--source-max {1} ' +
-        '--source-min 0 ' +
-        '--validators-mnemonic="{2}" ' +
-        '--withdrawals-mnemonic="{2}" ' +
+        '{0} deposit-data '
+        '--fork-version 0x00000000 '
+        '--source-max {1} '
+        '--source-min 0 '
+        '--validators-mnemonic="{2}" '
+        '--withdrawals-mnemonic="{2}" '
         '--as-json-list > /tmp/validators.json'
     ).format(
         KEYSTORES_GENERATION_TOOL_NAME,
@@ -106,44 +107,50 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
         max_effective_balance
     )
 
-    # Execute the command
+    # Execute the command to generate the JSON file
     command_result = plan.exec(
         service_name=service_name,
-        description="Generating validators_for_custom_amount",
+        description="Generating validators JSON",
         recipe=ExecRecipe(command=["sh", "-c", command_str]),
     )
-    plan.verify(command_result["code"], "==", SUCCESSFUL_EXEC_CMD_EXIT_CODE)
+    plan.verify(command_result.get("code", -1), "==", SUCCESSFUL_EXEC_CMD_EXIT_CODE)
 
-    # Read the JSON file and process it
+    # Command to read the JSON file and format its content
     read_command_str = "cat /tmp/validators.json"
     read_result = plan.exec(
         service_name=service_name,
         description="Reading JSON file",
         recipe=ExecRecipe(command=["sh", "-c", read_command_str]),
     )
-    plan.verify(read_result["code"], "==", SUCCESSFUL_EXEC_CMD_EXIT_CODE)
 
-    # Process the JSON content manually
-    raw_output = read_result["stdout"]
+    # Extract raw JSON output from result
+    raw_output = read_result.get("stdout", "")
+    if not raw_output:
+        ValueError("Error: stdout key not found in command result")
+
+    # Format the JSON data
     formatted_lines = []
     for line in raw_output.splitlines():
-        if line.strip():  # Process non-empty lines
-            line = line.strip().strip('"')
+        line = line.strip().strip('"')
+        if line:
             parts = line.split(',')
+            if len(parts) < 2:
+                continue
             pubkey = parts[0].split(':')[1]
             withdrawal_credentials = parts[1].split(':')[1]
-            formatted_lines.append("0x{pubkey}:{withdrawal_credentials}:{max_effective_balance}")
+            formatted_lines.append(f"0x{pubkey}:{withdrawal_credentials}:{max_effective_balance}")
 
-    # Write the formatted data to a file
-    formatted_file_command = "echo '{0}' > /validators.txt".format('\n'.join(formatted_lines))
-    formatted_file_result = plan.exec(
+    # Write formatted data to a file
+    formatted_data = "\n".join(formatted_lines)
+    write_command_str = f"echo '{formatted_data}' > /validators.txt"
+    write_result = plan.exec(
         service_name=service_name,
         description="Writing formatted validators to file",
-        recipe=ExecRecipe(command=["sh", "-c", formatted_file_command]),
+        recipe=ExecRecipe(command=["sh", "-c", write_command_str]),
     )
-    plan.verify(formatted_file_result["code"], "==", SUCCESSFUL_EXEC_CMD_EXIT_CODE)
+    plan.verify(write_result.get("code", -1), "==", SUCCESSFUL_EXEC_CMD_EXIT_CODE)
 
-    # Store the validators.txt file as an artifact
+    # Store the formatted file as an artifact
     artifact_name = plan.store_service_files(
         service_name,
         "/validators.txt",  # Path to the file within the service container
@@ -151,7 +158,6 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
     )
 
     return artifact_name
-
 
 # Generates keystores for the given number of nodes from the given mnemonic, where each keystore contains approximately
 #
