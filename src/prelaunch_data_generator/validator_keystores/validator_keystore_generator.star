@@ -125,21 +125,43 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
 
     # Extract raw JSON output from result
     raw_output = read_result.get("stdout", "")
-    # Format the JSON data
+    # Simple JSON-like data parsing
+    def parse_json_like_data(raw_data):
+        # Strip outer brackets and split items by '},'
+        raw_data = raw_data.strip().strip('[]')
+        items = raw_data.split('},')
+
+        # Add back the closing brace for all but the last item
+        items = [item + '}' if i < len(items) - 1 else item for i, item in enumerate(items)]
+
+        # Parse each item manually
+        parsed_items = []
+        for item in items:
+            item = item.strip('{} \n\r\t')
+            fields = item.split(',')
+            data_dict = {}
+            for field in fields:
+                key, value = field.split(':', 1)
+                key = key.strip().strip('"')
+                value = value.strip().strip('"')
+                data_dict[key] = value
+            parsed_items.append(data_dict)
+
+        return parsed_items
+
+    # Parse the raw JSON-like output
+    validators = parse_json_like_data(raw_output)
+
+    # Format the data
     formatted_lines = []
-    for line in raw_output.splitlines():
-        line = line.strip().strip('"')
-        if line:
-            parts = line.split(',')
-            if len(parts) < 2:
-                continue
-            pubkey = parts[0].split(':')[1]
-            withdrawal_credentials = parts[1].split(':')[1]
-            formatted_lines.append("0x{pubkey}:{withdrawal_credentials}:{max_effective_balance}")
+    for validator in validators:
+        pubkey = validator.get("pubkey", "").strip()
+        withdrawal_credentials = validator.get("withdrawal_credentials", "").strip()
+        formatted_lines.append(f"0x{pubkey}:{withdrawal_credentials}:{max_effective_balance}")
 
     # Write formatted data to a file
     formatted_data = "\n".join(formatted_lines)
-    write_command_str = "echo '{formatted_data}' > /validators.txt"
+    write_command_str = f"echo '{formatted_data}' > /validators.txt"
     write_result = plan.exec(
         service_name=service_name,
         description="Writing formatted validators to file",
@@ -153,8 +175,6 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
         "/validators.txt",  # Path to the file within the service container
         name="validators_file"
     )
-
-    plan.print(json.indent(json.encode(formatted_data)))
 
     return artifact_name
 
