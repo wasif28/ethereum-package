@@ -133,7 +133,7 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
         "  if(pubkey && withdrawal_credentials && value) {"
         "    printf \"0x%s:%s:%s\\n\", pubkey, withdrawal_credentials, value;"
         "  }"
-        "}' > formatted_validators.txt"
+        "}' > validators.txt"
     )
     read_result = plan.exec(
         service_name=service_name,
