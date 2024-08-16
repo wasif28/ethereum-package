@@ -28,9 +28,8 @@ KEYSTORE_GENERATION_FINISHED_FILEPATH_FORMAT = "/tmp/keystores_generated-{0}-{1}
 SERVICE_NAME_PREFIX = "validator-key-generation-"
 
 ENTRYPOINT_ARGS = [
-    "sh",
-    "-c",
-    "apt-get update && apt-get install -y jq && sleep 99999"
+    "sleep",
+    "99999",
 ]
 
 def launch_generate_extra_validators(
