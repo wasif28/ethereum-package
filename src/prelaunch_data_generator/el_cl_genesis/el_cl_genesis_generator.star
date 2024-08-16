@@ -49,8 +49,6 @@ def generate_el_cl_genesis_data(
     if extra_validators_for_custom_amount_data:
         files["/tmp"] = extra_validators_for_custom_amount_data
 
-    plan.print("TODO::::")
-
     genesis = plan.run_sh(
         name="run-generate-genesis",
         description="Creating genesis",
