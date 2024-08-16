@@ -157,11 +157,11 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
     for validator in validators:
         pubkey = validator.get("pubkey", "").strip()
         withdrawal_credentials = validator.get("withdrawal_credentials", "").strip()
-        formatted_lines.append(f"0x{pubkey}:{withdrawal_credentials}:{max_effective_balance}")
+        formatted_lines.append("0x{pubkey}:{withdrawal_credentials}:{max_effective_balance}")
 
     # Write formatted data to a file
     formatted_data = "\n".join(formatted_lines)
-    write_command_str = f"echo '{formatted_data}' > /validators.txt"
+    write_command_str = "echo '{formatted_data}' > /validators.txt"
     write_result = plan.exec(
         service_name=service_name,
         description="Writing formatted validators to file",
