@@ -125,9 +125,6 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
 
     # Extract raw JSON output from result
     raw_output = read_result.get("stdout", "")
-    if not raw_output:
-        throw ValueError("Error: stdout key not found in command result")
-
     # Format the JSON data
     formatted_lines = []
     for line in raw_output.splitlines():
