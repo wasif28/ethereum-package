@@ -126,7 +126,7 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
 
     # Now you can use jq in subsequent commands
     process_json_cmd = (
-        "cat /tmp/validators.json | "
+        "cat /tmp/validators.json | " +
         "jq -r '.[] | \"0x\\(.pubkey):\\(.withdrawal_credentials):\\(.value)\"' > validators.txt"
     )
 
