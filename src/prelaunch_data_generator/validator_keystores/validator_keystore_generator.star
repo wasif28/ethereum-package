@@ -93,12 +93,12 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
 
     # Command to generate the JSON file with validators data
     command_str = (
-        '{0} deposit-data '
-        '--fork-version 0x00000000 '
-        '--source-max {1} '
-        '--source-min 0 '
-        '--validators-mnemonic="{2}" '
-        '--withdrawals-mnemonic="{2}" '
+        '{0} deposit-data ' +
+        '--fork-version 0x00000000 ' +
+        '--source-max {1} ' +
+        '--source-min 0 ' +
+        '--validators-mnemonic="{2}" ' +
+        '--withdrawals-mnemonic="{2}" ' +
         '--as-json-list > /tmp/validators.json'
     ).format(
         KEYSTORES_GENERATION_TOOL_NAME,
