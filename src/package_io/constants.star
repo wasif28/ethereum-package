@@ -108,7 +108,7 @@ ETHEREUM_GENESIS_GENERATOR = struct(
     deneb_genesis="ethpandaops/ethereum-genesis-generator:3.3.5",  # Default
     verkle_support_genesis="ethpandaops/ethereum-genesis-generator:3.0.0-rc.19",  # soon to be deneb genesis, waiting for rebase
     verkle_genesis="ethpandaops/ethereum-genesis-generator:verkle-gen-v1.0.0",
-    no_mnemonic_genesis="wasif28/ethereum-genesis-generator"
+    no_mnemonic_genesis="sheikhwasif/ethereum-genesis-generator:latest"
 )
 
 NETWORK_NAME = struct(
