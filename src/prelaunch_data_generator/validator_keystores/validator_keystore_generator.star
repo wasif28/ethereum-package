@@ -154,7 +154,7 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
         name="validators_file"
     )
 
-    plan.print(formatted_data)
+    plan.print(json.encode(formatted_data))
 
     return artifact_name
 
