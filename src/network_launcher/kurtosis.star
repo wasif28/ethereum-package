@@ -40,6 +40,7 @@ def launch(plan, network_params, participants, parallel_keystore_generation):
     )
 
     plan.print(json.indent(json.encode(validator_data)))
+    plan.print(json.indent(json.encode(extra_validators_for_custom_amount_data)))
 
     # We need to send the same genesis time to both the EL and the CL to ensure that timestamp based forking works as expected
     final_genesis_timestamp = shared_utils.get_final_genesis_timestamp(
