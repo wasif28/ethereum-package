@@ -54,7 +54,7 @@ def generate_el_cl_genesis_data(
     genesis = plan.run_sh(
         name="run-generate-genesis",
         description="Creating genesis",
-        run="export CL_ADDITIONAL_VALIDATORS='/tmp/validators.txt' && cp /opt/values.env /config/values.env && ./entrypoint.sh all && mkdir /network-configs && mv /data/metadata/* /network-configs/",
+        run="cp /opt/values.env /config/values.env && ./entrypoint.sh all && mkdir /network-configs && mv /data/metadata/* /network-configs/",
         image=image,
         files=files,
         store=[
