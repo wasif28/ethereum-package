@@ -91,18 +91,28 @@ def get_config(files_artifact_mountpoints):
 def generate_extra_validators(plan, mnemonic, num_participants, max_effective_balance):
     service_name = launch_generate_extra_validators(plan, {}, "custom-amount")
 
+    install_jq_cmd = "apt-get update && apt-get install -y jq"
+
+    # Execute the command to install jq
+    plan.exec(
+        service_name=service_name,
+        description="Installing jq",
+        recipe=ExecRecipe(command=["sh", "-c", install_jq_cmd]),
+    )
+
     # Command to generate the JSON file with validators data
     command_str = (
-        '{0} deposit-data ' +
-        '--fork-version 0x00000000 ' +
-        '--source-max {1} ' +
-        '--source-min 0 ' +
-        '--validators-mnemonic="{2}" ' +
-        '--withdrawals-mnemonic="{2}" ' +
-        '--as-json-list > /tmp/validators.json'
+        '{0} deposit-data '
+        '--fork-version 0x00000000 '
+        '--source-max {1} '
+        '--source-min 0 '
+        '--validators-mnemonic="{2}" '
+        '--withdrawals-mnemonic="{2}" '
+        '--as-json-list | jq \'.[] | "0x" + .pubkey + ":" + .withdrawal_credentials + ":{3}"\' '
+        '| tr -d \'"\' > /tmp/validators.txt'
     ).format(
         KEYSTORES_GENERATION_TOOL_NAME,
-        num_participants,
+        participants,
         mnemonic,
         max_effective_balance
     )
@@ -114,29 +124,6 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
         recipe=ExecRecipe(command=["sh", "-c", command_str]),
     )
     plan.verify(command_result.get("code", -1), "==", SUCCESSFUL_EXEC_CMD_EXIT_CODE)
-
-    install_jq_cmd = "apt-get update && apt-get install -y jq"
-
-    # Execute the command to install jq
-    plan.exec(
-        service_name=service_name,
-        description="Installing jq",
-        recipe=ExecRecipe(command=["sh", "-c", install_jq_cmd]),
-    )
-
-    # Now you can use jq in subsequent commands
-    process_json_cmd = (
-        "cat /tmp/validators.json | " +
-        "jq -r '.[] | \"0x\\(.pubkey):\\(.withdrawal_credentials):\\(.value)\"' > /tmp/parsed_validators.txt" +
-        "&& cat /tmp/parsed_validators.txt"
-    )
-
-    # Execute the command to process JSON
-    command_result = plan.exec(
-        service_name=service_name,
-        description="Processing JSON with jq",
-        recipe=ExecRecipe(command=["sh", "-c", process_json_cmd]),
-    )
 
     # Store the formatted file as an artifact
     artifact_name = plan.store_service_files(
