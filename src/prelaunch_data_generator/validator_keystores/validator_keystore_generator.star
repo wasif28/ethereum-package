@@ -128,7 +128,7 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
     # Store the formatted file as an artifact
     artifact_name = plan.store_service_files(
         service_name,
-        "/tmp/parsed_validators.txt",  # Path to the file within the service container
+        "/tmp/validators.txt",  # Path to the file within the service container
         name="validators_file"
     )
 
