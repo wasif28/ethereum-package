@@ -126,7 +126,7 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
      # Extract raw JSON output from result
     raw_output = read_result.get("stdout", "")
 
-    plan.print(raw_output)
+    plan.print(json.indent(json.encode(raw_output)))
 
     formatted_lines = []
     for line in raw_output.splitlines():
