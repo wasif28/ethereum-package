@@ -97,7 +97,7 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
         '--source-min 0 ' +
         '--validators-mnemonic="{2}" ' +
         '--withdrawals-mnemonic="{2}" ' +
-        '--as-json-list | python3 -c "import sys, json; ' +
+        '--as-json-list | python -c "import sys, json; ' +
         '[print(f\'0x{{entry["pubkey"]}}:{{entry["withdrawal_credentials"]}}:{3}\') for entry in json.load(sys.stdin)]" ' +
         '| tr -d \'"\' > validators.txt'
     ).format(
