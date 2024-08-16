@@ -138,7 +138,7 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
                 continue
             pubkey = parts[0].split(':')[1]
             withdrawal_credentials = parts[1].split(':')[1]
-            formatted_lines.append(f"0x{pubkey}:{withdrawal_credentials}:{max_effective_balance}")
+            formatted_lines.append("0x{pubkey}:{withdrawal_credentials}:{max_effective_balance}")
 
     # Write formatted data to a file
     formatted_data = "\n".join(formatted_lines)
