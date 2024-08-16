@@ -46,8 +46,10 @@ def generate_el_cl_genesis_data(
 
     files[GENESIS_VALUES_PATH] = genesis_generation_config_artifact_name
 
+    if extra_validators_for_custom_amount_data:
+        files["/network-configs/validators.txt"] = extra_validators_for_custom_amount_data
+
     plan.print("TODO::::")
-    plan.print(extra_validators_for_custom_amount_data)
 
     genesis = plan.run_sh(
         name="run-generate-genesis",
