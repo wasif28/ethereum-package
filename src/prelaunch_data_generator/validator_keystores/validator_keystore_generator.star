@@ -90,6 +90,7 @@ def get_config(files_artifact_mountpoints):
 
 def generate_extra_validators(plan, mnemonic, num_participants, max_effective_balance):
     service_name = launch_generate_extra_validators(plan, {}, "custom-amount")
+    # Command to generate JSON data and redirect to a file
     command_str = (
         '{0} deposit-data ' +
         '--fork-version 0x00000000 ' +
@@ -97,8 +98,7 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
         '--source-min 0 ' +
         '--validators-mnemonic="{2}" ' +
         '--withdrawals-mnemonic="{2}" ' +
-        '--as-json-list | jq \'.[] | "0x" + .pubkey + ":" + .withdrawal_credentials + ":{3}"\' ' +
-        '| tr -d \'"\' > validators.txt'
+        '--as-json-list > /tmp/validators.json'
     ).format(
         KEYSTORES_GENERATION_TOOL_NAME,
         num_participants,
@@ -106,14 +106,42 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
         max_effective_balance
     )
 
-    plan.print(command_result)
-
+    # Execute the command
     command_result = plan.exec(
         service_name=service_name,
         description="Generating validators_for_custom_amount",
         recipe=ExecRecipe(command=["sh", "-c", command_str]),
     )
     plan.verify(command_result["code"], "==", SUCCESSFUL_EXEC_CMD_EXIT_CODE)
+
+    # Read the JSON file and process it
+    read_command_str = "cat /tmp/validators.json"
+    read_result = plan.exec(
+        service_name=service_name,
+        description="Reading JSON file",
+        recipe=ExecRecipe(command=["sh", "-c", read_command_str]),
+    )
+    plan.verify(read_result["code"], "==", SUCCESSFUL_EXEC_CMD_EXIT_CODE)
+
+    # Process the JSON content manually
+    raw_output = read_result["stdout"]
+    formatted_lines = []
+    for line in raw_output.splitlines():
+        if line.strip():  # Process non-empty lines
+            line = line.strip().strip('"')
+            parts = line.split(',')
+            pubkey = parts[0].split(':')[1]
+            withdrawal_credentials = parts[1].split(':')[1]
+            formatted_lines.append(f"0x{pubkey}:{withdrawal_credentials}:{max_effective_balance}")
+
+    # Write the formatted data to a file
+    formatted_file_command = "echo '{0}' > /validators.txt".format('\n'.join(formatted_lines))
+    formatted_file_result = plan.exec(
+        service_name=service_name,
+        description="Writing formatted validators to file",
+        recipe=ExecRecipe(command=["sh", "-c", formatted_file_command]),
+    )
+    plan.verify(formatted_file_result["code"], "==", SUCCESSFUL_EXEC_CMD_EXIT_CODE)
 
     # Store the validators.txt file as an artifact
     artifact_name = plan.store_service_files(
