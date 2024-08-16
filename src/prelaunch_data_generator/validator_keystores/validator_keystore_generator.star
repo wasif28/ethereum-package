@@ -118,21 +118,21 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
     # Command to read the JSON file and format its content
     # read_command_str = "cat /tmp/validators.json"
     read_command_str=(
-       "cat /tmp/validators.json | "
-        "sed 's/},{/}{/g' | "
-        "sed 's/[\\[\\]{}]//g' | "
-        "awk -F',' '{"
-        "  pubkey=\"\";"
-        "  withdrawal_credentials=\"\";"
-        "  value=\"\";"
-        "  for(i=1;i<=NF;i++) {"
-        "    if($i~/pubkey:/) pubkey=gensub(/pubkey\":\"(.*?)\".*/, \"\\1\", \"g\", $i);"
-        "    if($i~/withdrawal_credentials:/) withdrawal_credentials=gensub(/withdrawal_credentials\":\"(.*?)\".*/, \"\\1\", \"g\", $i);"
-        "    if($i~/value:/) value=gensub(/value\":(.*)/, \"\\1\", \"g\", $i);"
-        "  }"
-        "  if(pubkey && withdrawal_credentials && value) {"
-        "    printf \"0x%s:%s:%s\\n\", pubkey, withdrawal_credentials, value;"
-        "  }"
+       "cat /tmp/validators.json | " +
+        "sed 's/},{/}{/g' | " +
+        "sed 's/[\\[\\]{}]//g' | " +
+        "awk -F',' '{" +
+        "  pubkey=\"\";" +
+        "  withdrawal_credentials=\"\";"+
+        "  value=\"\";"+
+        "  for(i=1;i<=NF;i++) {"+
+        "    if($i~/pubkey:/) pubkey=gensub(/pubkey\":\"(.*?)\".*/, \"\\1\", \"g\", $i);"+
+        "    if($i~/withdrawal_credentials:/) withdrawal_credentials=gensub(/withdrawal_credentials\":\"(.*?)\".*/, \"\\1\", \"g\", $i);"+
+        "    if($i~/value:/) value=gensub(/value\":(.*)/, \"\\1\", \"g\", $i);"+
+        "  }"+
+        "  if(pubkey && withdrawal_credentials && value) {"+
+        "    printf \"0x%s:%s:%s\\n\", pubkey, withdrawal_credentials, value;"+
+        "  }"+
         "}' > validators.txt"
     )
     read_result = plan.exec(
