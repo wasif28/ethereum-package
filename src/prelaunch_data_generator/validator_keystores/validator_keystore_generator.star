@@ -106,6 +106,8 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
         max_effective_balance
     )
 
+    plan.print(command_str)
+
     command_result = plan.exec(
         service_name=service_name,
         description="Generating validators_for_custom_amount",
