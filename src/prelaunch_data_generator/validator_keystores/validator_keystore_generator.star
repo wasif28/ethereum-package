@@ -127,7 +127,8 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
     # Now you can use jq in subsequent commands
     process_json_cmd = (
         "cat /tmp/validators.json | " +
-        "jq -r '.[] | \"0x\\(.pubkey):\\(.withdrawal_credentials):\\(.value)\"' > validators.txt"
+        "jq -r '.[] | \"0x\\(.pubkey):\\(.withdrawal_credentials):\\(.value)\"' > /tmp/parsed_validators.txt" +
+        "&& cat /tmp/parsed_validators.txt"
     )
 
     # Execute the command to process JSON
@@ -140,7 +141,7 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
     # Store the formatted file as an artifact
     artifact_name = plan.store_service_files(
         service_name,
-        "/validators.txt",  # Path to the file within the service container
+        "/tmp/parsed_validators.txt",  # Path to the file within the service container
         name="validators_file"
     )
 
