@@ -136,7 +136,9 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
                 continue
             pubkey = parts[0].split(':')[1].strip('"')
             withdrawal_credentials = parts[1].split(':')[1].strip('"')
-            formatted_lines.append(f"0x{pubkey}:{withdrawal_credentials}:{max_effective_balance}")
+            formatted_lines.append("0x{pubkey}:{withdrawal_credentials}:{max_effective_balance}")
+
+    plan.print(json.indent(json.encode(formatted_lines)))
 
     # Store the formatted file as an artifact
     artifact_name = plan.store_service_files(
@@ -144,8 +146,6 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
         "/validators.txt",  # Path to the file within the service container
         name="validators_file"
     )
-
-    plan.print(json.indent(json.encode(formatted_lines)))
 
     return artifact_name
 
