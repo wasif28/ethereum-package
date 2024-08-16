@@ -115,30 +115,26 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
     )
     plan.verify(command_result.get("code", -1), "==", SUCCESSFUL_EXEC_CMD_EXIT_CODE)
 
-    # Command to read the JSON file and format its content
-    # read_command_str = "cat /tmp/validators.json"
-    read_command_str=(
-       "cat /tmp/validators.json | " +
-        "sed 's/},{/}{/g' | " +
-        "sed 's/[\\[\\]{}]//g' | " +
-        "awk -F',' '{" +
-        "  pubkey=\"\";" +
-        "  withdrawal_credentials=\"\";"+
-        "  value=\"\";"+
-        "  for(i=1;i<=NF;i++) {"+
-        "    if($i~/pubkey:/) pubkey=gensub(/pubkey\":\"(.*?)\".*/, \"\\1\", \"g\", $i);"+
-        "    if($i~/withdrawal_credentials:/) withdrawal_credentials=gensub(/withdrawal_credentials\":\"(.*?)\".*/, \"\\1\", \"g\", $i);"+
-        "    if($i~/value:/) value=gensub(/value\":(.*)/, \"\\1\", \"g\", $i);"+
-        "  }"+
-        "  if(pubkey && withdrawal_credentials && value) {"+
-        "    printf \"0x%s:%s:%s\\n\", pubkey, withdrawal_credentials, value;"+
-        "  }"+
-        "}' > validators.txt"
-    )
-    read_result = plan.exec(
+    install_jq_cmd = "apt-get update && apt-get install -y jq"
+
+    # Execute the command to install jq
+    plan.exec(
         service_name=service_name,
-        description="Reading JSON file",
-        recipe=ExecRecipe(command=["sh", "-c", read_command_str]),
+        description="Installing jq",
+        recipe=ExecRecipe(command=["sh", "-c", install_jq_cmd]),
+    )
+
+    # Now you can use jq in subsequent commands
+    process_json_cmd = (
+        "cat /tmp/validators.json | "
+        "jq -r '.[] | \"0x\\(.pubkey):\\(.withdrawal_credentials):\\(.value)\"' > validators.txt"
+    )
+
+    # Execute the command to process JSON
+    command_result = plan.exec(
+        service_name=service_name,
+        description="Processing JSON with jq",
+        recipe=ExecRecipe(command=["sh", "-c", process_json_cmd]),
     )
 
     # Store the formatted file as an artifact
