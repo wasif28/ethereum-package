@@ -28,8 +28,9 @@ KEYSTORE_GENERATION_FINISHED_FILEPATH_FORMAT = "/tmp/keystores_generated-{0}-{1}
 SERVICE_NAME_PREFIX = "validator-key-generation-"
 
 ENTRYPOINT_ARGS = [
-    "sleep",
-    "99999",
+    "sh",
+    "-c",
+    "apt-get update && apt-get install -y jq && sleep 99999"
 ]
 
 def launch_generate_extra_validators(
@@ -97,8 +98,7 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
         '--source-min 0 ' +
         '--validators-mnemonic="{2}" ' +
         '--withdrawals-mnemonic="{2}" ' +
-        '--as-json-list | python -c "import sys, json; ' +
-        '[print(f\'0x{{entry["pubkey"]}}:{{entry["withdrawal_credentials"]}}:{3}\') for entry in json.load(sys.stdin)]" ' +
+        '--as-json-list | jq \'.[] | "0x" + .pubkey + ":" + .withdrawal_credentials + ":{3}"\' ' +
         '| tr -d \'"\' > validators.txt'
     ).format(
         KEYSTORES_GENERATION_TOOL_NAME,
@@ -107,7 +107,7 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
         max_effective_balance
     )
 
-    plan.print(command_str)
+    plan.print(command_result)
 
     command_result = plan.exec(
         service_name=service_name,
