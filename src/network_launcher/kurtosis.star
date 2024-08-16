@@ -79,6 +79,7 @@ def launch(plan, network_params, participants, parallel_keystore_generation):
         ethereum_genesis_generator_image = (
             constants.ETHEREUM_GENESIS_GENERATOR.no_mnemonic_genesis
         )
+        plan.print("debusssssss")
     # we are running electra - experimental
     elif network_params.electra_fork_epoch != None:
         if network_params.electra_fork_epoch == 0:
