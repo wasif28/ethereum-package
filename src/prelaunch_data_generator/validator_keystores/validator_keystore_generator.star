@@ -116,31 +116,30 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
     plan.verify(command_result.get("code", -1), "==", SUCCESSFUL_EXEC_CMD_EXIT_CODE)
 
     # Command to read the JSON file and format its content
-    read_command_str = "cat /tmp/validators.json"
+    # read_command_str = "cat /tmp/validators.json"
+    read_command_str=(
+       "cat /tmp/validators.json | "
+        "sed 's/},{/}{/g' | "
+        "sed 's/[\\[\\]{}]//g' | "
+        "awk -F',' '{"
+        "  pubkey=\"\";"
+        "  withdrawal_credentials=\"\";"
+        "  value=\"\";"
+        "  for(i=1;i<=NF;i++) {"
+        "    if($i~/pubkey:/) pubkey=gensub(/pubkey\":\"(.*?)\".*/, \"\\1\", \"g\", $i);"
+        "    if($i~/withdrawal_credentials:/) withdrawal_credentials=gensub(/withdrawal_credentials\":\"(.*?)\".*/, \"\\1\", \"g\", $i);"
+        "    if($i~/value:/) value=gensub(/value\":(.*)/, \"\\1\", \"g\", $i);"
+        "  }"
+        "  if(pubkey && withdrawal_credentials && value) {"
+        "    printf \"0x%s:%s:%s\\n\", pubkey, withdrawal_credentials, value;"
+        "  }"
+        "}' > formatted_validators.txt"
+    )
     read_result = plan.exec(
         service_name=service_name,
         description="Reading JSON file",
         recipe=ExecRecipe(command=["sh", "-c", read_command_str]),
     )
-
-     # Extract raw JSON output from result
-    raw_output = read_result.get("stdout", "")
-
-    plan.print(json.indent(json.encode(raw_output)))
-
-    formatted_lines = []
-    for line in raw_output.splitlines():
-        line = line.strip()
-        if line and not line.startswith("[") and not line.endswith("]"):
-            # Simplify JSON-like line extraction
-            parts = line.split(',')
-            if len(parts) < 2:
-                continue
-            pubkey = parts[0].split(':')[1].strip('"')
-            withdrawal_credentials = parts[1].split(':')[1].strip('"')
-            formatted_lines.append("0x{pubkey}:{withdrawal_credentials}:{max_effective_balance}")
-
-    plan.print(json.indent(json.encode(formatted_lines)))
 
     # Store the formatted file as an artifact
     artifact_name = plan.store_service_files(
