@@ -112,7 +112,7 @@ def generate_extra_validators(plan, mnemonic, num_participants, max_effective_ba
         '| tr -d \'"\' > /tmp/validators.txt'
     ).format(
         KEYSTORES_GENERATION_TOOL_NAME,
-        participants,
+        num_participants,
         mnemonic,
         max_effective_balance
     )
