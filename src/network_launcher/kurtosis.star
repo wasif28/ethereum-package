@@ -64,7 +64,6 @@ def launch(plan, network_params, participants, parallel_keystore_generation):
         ethereum_genesis_generator_image = (
             constants.ETHEREUM_GENESIS_GENERATOR.no_mnemonic_genesis
         )
-        plan.print("debusss")
     # we are running capella genesis - deprecated
     elif network_params.deneb_fork_epoch > 0:
         ethereum_genesis_generator_image = (
