@@ -74,6 +74,11 @@ def launch(plan, network_params, participants, parallel_keystore_generation):
         ethereum_genesis_generator_image = (
             constants.ETHEREUM_GENESIS_GENERATOR.deneb_genesis
         )
+    # we are running cases where we use most things custom for different protocol stake amount mostly new chains
+    elif network_params.max_effective_balance != 32000000000:
+        ethereum_genesis_generator_image = (
+            constants.ETHEREUM_GENESIS_GENERATOR.no_mnemonic_genesis
+        )
     # we are running electra - experimental
     elif network_params.electra_fork_epoch != None:
         if network_params.electra_fork_epoch == 0:
