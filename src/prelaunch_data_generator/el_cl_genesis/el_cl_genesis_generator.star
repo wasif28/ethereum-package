@@ -53,12 +53,12 @@ def generate_el_cl_genesis_data(
         name="run-generate-genesis",
         description="Creating genesis",
         run = (
-            "cp /tmp/validators.txt /config/additional_validators.txt && "
-            "cp /opt/values.env /config/values.env && "
-            "CL_ADDITIONAL_VALIDATORS='/config/additional_validators.txt'; "
-            "MAX_EFFECTIVE_BALANCE={}; "
-            "./entrypoint.sh all && "
-            "mkdir /network-configs && "
+            "cp /tmp/validators.txt /config/additional_validators.txt && " +
+            "cp /opt/values.env /config/values.env && " +
+            "CL_ADDITIONAL_VALIDATORS='/config/additional_validators.txt'; " +
+            "MAX_EFFECTIVE_BALANCE={0}; " +
+            "./entrypoint.sh all && " +
+            "mkdir /network-configs && " +
             "mv /data/metadata/* /network-configs/"
         ).format(network_params.max_effective_balance),
         image=image,
