@@ -60,7 +60,7 @@ def generate_el_cl_genesis_data(
             "./entrypoint.sh all && "
             "mkdir /network-configs && "
             "mv /data/metadata/* /network-configs/"
-        ).format(network_params.max_effective_balance)
+        ).format(network_params.max_effective_balance),
         image=image,
         files=files,
         store=[
