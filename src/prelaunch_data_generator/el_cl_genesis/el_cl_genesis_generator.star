@@ -56,7 +56,7 @@ def generate_el_cl_genesis_data(
             "cp /tmp/validators.txt /config/additional_validators.txt && " +
             "cp /opt/values.env /config/values.env && " +
             "MAX_EFFECTIVE_BALANCE={0} " +
-            "CL_ADDITIONAL_VALIDATORS='/config/additional_validators.txt' " +
+            # "CL_ADDITIONAL_VALIDATORS='/config/additional_validators.txt' " +
             "./entrypoint.sh all && " +
             "mkdir /network-configs && " +
             "mv /data/metadata/* /network-configs/"
