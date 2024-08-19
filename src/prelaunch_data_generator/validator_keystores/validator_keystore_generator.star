@@ -32,20 +32,6 @@ ENTRYPOINT_ARGS = [
     "99999",
 ]
 
-def launch_generate_extra_validators(
-    plan,
-    files_artifact_mountpoints,
-    service_name_suffix
-):
-    config = get_config(files_artifact_mountpoints)
-    service_name = "{0}{1}".format(
-        SERVICE_NAME_PREFIX,
-        service_name_suffix,
-    )
-    plan.add_service(service_name, config)
-
-    return service_name
-
 # Launches a prelaunch data generator IMAGE, for use in various of the genesis generation
 def launch_prelaunch_data_generator(
     plan,
@@ -87,52 +73,6 @@ def get_config(files_artifact_mountpoints):
         entrypoint=ENTRYPOINT_ARGS,
         files=files_artifact_mountpoints,
     )
-
-def generate_extra_validators(plan, mnemonic, num_participants, max_effective_balance):
-    service_name = launch_generate_extra_validators(plan, {}, "custom-amount")
-
-    install_jq_cmd = "apt-get update && apt-get install -y jq"
-
-    # Execute the command to install jq
-    plan.exec(
-        service_name=service_name,
-        description="Installing jq",
-        recipe=ExecRecipe(command=["sh", "-c", install_jq_cmd]),
-    )
-
-    # Command to generate the JSON file with validators data
-    command_str = (
-        '{0} deposit-data '+
-        '--fork-version 0x00000000 '+
-        '--source-max {1} '+
-        '--source-min 0 '+
-        '--validators-mnemonic="{2}" '+
-        '--withdrawals-mnemonic="{2}" '+
-        '--as-json-list | jq \'.[] | "0x" + .pubkey + ":" + .withdrawal_credentials + ":{3}"\' '+
-        '| tr -d \'"\' > /tmp/validators.txt'
-    ).format(
-        KEYSTORES_GENERATION_TOOL_NAME,
-        num_participants,
-        mnemonic,
-        max_effective_balance
-    )
-
-    # Execute the command to generate the JSON file
-    command_result = plan.exec(
-        service_name=service_name,
-        description="Generating validators JSON",
-        recipe=ExecRecipe(command=["sh", "-c", command_str]),
-    )
-    plan.verify(command_result.get("code", -1), "==", SUCCESSFUL_EXEC_CMD_EXIT_CODE)
-
-    # Store the formatted file as an artifact
-    artifact_name = plan.store_service_files(
-        service_name,
-        "/tmp/validators.txt",  # Path to the file within the service container
-        name="validators_file"
-    )
-
-    return artifact_name
 
 # Generates keystores for the given number of nodes from the given mnemonic, where each keystore contains approximately
 #

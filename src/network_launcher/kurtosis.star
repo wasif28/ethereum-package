@@ -32,15 +32,7 @@ def launch(plan, network_params, participants, parallel_keystore_generation):
             participants,
         )
 
-    extra_validators_for_custom_amount_data = validator_keystores.generate_extra_validators(
-        plan,
-        network_params.preregistered_validator_keys_mnemonic,
-        network_params.num_validator_keys_per_node * num_participants,
-        network_params.max_effective_balance
-    )
-
     plan.print(json.indent(json.encode(validator_data)))
-    plan.print(json.indent(json.encode(extra_validators_for_custom_amount_data)))
 
     # We need to send the same genesis time to both the EL and the CL to ensure that timestamp based forking works as expected
     final_genesis_timestamp = shared_utils.get_final_genesis_timestamp(
@@ -98,5 +90,4 @@ def launch(plan, network_params, participants, parallel_keystore_generation):
         ethereum_genesis_generator_image,
         final_genesis_timestamp,
         validator_data,
-        extra_validators_for_custom_amount_data,
     )

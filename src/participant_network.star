@@ -79,7 +79,6 @@ def launch_participant_network(
             ethereum_genesis_generator_image,
             final_genesis_timestamp,
             validator_data,
-            extra_validators_for_custom_amount_data,
         ) = launch_kurtosis.launch(
             plan, network_params, participants, parallel_keystore_generation
         )
@@ -96,7 +95,6 @@ def launch_participant_network(
             network_params,
             total_number_of_validator_keys,
             latest_block.files_artifacts[0] if latest_block != "" else "",
-            extra_validators_for_custom_amount_data,
         )
     elif network_params.network in constants.PUBLIC_NETWORKS:
         # We are running a public network

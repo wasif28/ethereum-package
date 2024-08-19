@@ -16,7 +16,6 @@ def generate_el_cl_genesis_data(
     network_params,
     total_num_validator_keys_to_preregister,
     latest_block,
-    extra_validators_for_custom_amount_data,
 ):
     files = {}
     shadowfork_file = ""
@@ -46,16 +45,11 @@ def generate_el_cl_genesis_data(
 
     files[GENESIS_VALUES_PATH] = genesis_generation_config_artifact_name
 
-    if extra_validators_for_custom_amount_data:
-        files["/tmp"] = extra_validators_for_custom_amount_data
-
     genesis = plan.run_sh(
         name="run-generate-genesis",
         description="Creating genesis",
         run = (
-            # "cp /tmp/validators.txt /config/additional_validators.txt && " +
             "cp /opt/values.env /config/values.env && " +
-            # "CL_ADDITIONAL_VALIDATORS='/config/additional_validators.txt' " +
             "./entrypoint.sh all && " +
             "mkdir /network-configs && " +
             "mv /data/metadata/* /network-configs/"
