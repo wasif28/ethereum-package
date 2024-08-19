@@ -1,0 +1,54 @@
+participants:
+  - el_type: geth
+    cl_type: lighthouse
+    count: 2
+  - el_type: geth
+    cl_type: teku
+    count: 1
+network_params:
+  network_id: "28000"
+  deposit_contract_address: "0x4242424242424242424242424242424242424242"
+  num_validator_keys_per_node: 64
+  preregistered_validator_keys_mnemonic: "celery rabbit three glass sheriff chapter recycle split treat undo inherit just"
+  genesis_delay: 20
+  seconds_per_slot: 8
+  churn_limit_quotient: 65536
+  max_per_epoch_activation_churn_limit: 8
+  eth1_follow_distance: 2048
+  min_validator_withdrawability_delay: 256
+  shard_committee_period: 256
+  ejection_balance: 16000000000
+  min_deposit_amount: 1000000000
+  max_effective_balance: 50000000000
+  effective_balance_increment: 1000000000
+  # eip7594_fork_epoch: 0
+parallel_keystore_generation: true
+additional_services:
+  - broadcaster
+  - tx_spammer
+  - blob_spammer
+  - apache
+  - dora
+  # - blockscout
+port_publisher:
+  # Execution Layer public port exposed to your local machine
+  # Disabled by default
+  # Public port start defaults to 32000
+  # You can't run multiple enclaves on the same port settings
+  el:
+    enabled: true
+    public_port_start: 32000
+  # Consensus Layer public port exposed to your local machine
+  # Disabled by default
+  # Public port start defaults to 33000
+  # You can't run multiple enclaves on the same port settings
+  cl:
+    enabled: true
+    public_port_start: 33000
+  # Validator client public port exposed to your local machine
+  # Disabled by default
+  # Public port start defaults to 34000
+  # You can't run multiple enclaves on the same port settings
+  vc:
+    enabled: true
+    public_port_start: 34000
