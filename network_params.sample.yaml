@@ -3,7 +3,7 @@ participants:
   - el_type: geth
     cl_type: lighthouse
     cl_image: sheikhwasif/lighthouse:latest
-    count: 2
+    count: 5
     # only lighthouse is configured for the custom effective balance
 network_params:
   network_id: "28000"
@@ -29,7 +29,7 @@ additional_services:
   - blob_spammer
   - apache
   - dora
-  - blockscout
+  # - blockscout
 port_publisher:
   # Execution Layer public port exposed to your local machine
   # Disabled by default
