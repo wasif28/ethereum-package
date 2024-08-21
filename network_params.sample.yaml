@@ -3,7 +3,7 @@ participants:
   - el_type: geth
     cl_type: lighthouse
     cl_image: sheikhwasif/lighthouse:latest
-    count: 5
+    count: 1
     # only lighthouse is configured for the custom effective balance
 network_params:
   network_id: "28000"
@@ -17,9 +17,9 @@ network_params:
   eth1_follow_distance: 2048
   min_validator_withdrawability_delay: 256
   shard_committee_period: 256
-  ejection_balance: 512000000000
+  ejection_balance: 16384000000000
   min_deposit_amount: 1000000000
-  max_effective_balance: 1024000000000
+  max_effective_balance: 	32768000000000
   effective_balance_increment: 1000000000
   electra_fork_epoch: 1000000000
   eip7594_fork_epoch: 1000000001
@@ -30,25 +30,25 @@ additional_services:
   - apache
   - dora
   # - blockscout
-port_publisher:
-  # Execution Layer public port exposed to your local machine
-  # Disabled by default
-  # Public port start defaults to 32000
-  # You can't run multiple enclaves on the same port settings
-  el:
-    enabled: true
-    public_port_start: 32000
-  # Consensus Layer public port exposed to your local machine
-  # Disabled by default
-  # Public port start defaults to 33000
-  # You can't run multiple enclaves on the same port settings
-  cl:
-    enabled: true
-    public_port_start: 33000
-  # Validator client public port exposed to your local machine
-  # Disabled by default
-  # Public port start defaults to 34000
-  # You can't run multiple enclaves on the same port settings
-  vc:
-    enabled: true
-    public_port_start: 34000
+# port_publisher:
+#   # Execution Layer public port exposed to your local machine
+#   # Disabled by default
+#   # Public port start defaults to 32000
+#   # You can't run multiple enclaves on the same port settings
+#   el:
+#     enabled: true
+#     public_port_start: 32000
+#   # Consensus Layer public port exposed to your local machine
+#   # Disabled by default
+#   # Public port start defaults to 33000
+#   # You can't run multiple enclaves on the same port settings
+#   cl:
+#     enabled: true
+#     public_port_start: 33000
+#   # Validator client public port exposed to your local machine
+#   # Disabled by default
+#   # Public port start defaults to 34000
+#   # You can't run multiple enclaves on the same port settings
+#   vc:
+#     enabled: true
+#     public_port_start: 34000
