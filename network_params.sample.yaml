@@ -3,7 +3,7 @@ participants:
   - el_type: geth
     cl_type: lighthouse
     cl_image: sheikhwasif/lighthouse:latest
-    count: 1
+    count: 2
     # only lighthouse is configured for the custom effective balance
 network_params:
   network_id: "28000"
