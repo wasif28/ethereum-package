@@ -11,7 +11,7 @@ network_params:
   num_validator_keys_per_node: 64
   preregistered_validator_keys_mnemonic: "celery rabbit three glass sheriff chapter recycle split treat undo inherit just"
   genesis_delay: 20
-  seconds_per_slot: 5
+  seconds_per_slot: 7
   churn_limit_quotient: 65536
   max_per_epoch_activation_churn_limit: 8
   eth1_follow_distance: 2048
