@@ -8,7 +8,7 @@ participants:
 network_params:
   network_id: "28000"
   deposit_contract_address: "0x4242424242424242424242424242424242424242"
-  num_validator_keys_per_node: 64
+  num_validator_keys_per_node: 256
   preregistered_validator_keys_mnemonic: "celery rabbit three glass sheriff chapter recycle split treat undo inherit just"
   genesis_delay: 20
   seconds_per_slot: 7
