@@ -7,7 +7,6 @@ participants:
     count: 2
     # only lighthouse is configured for the custom effective balance
 network_params:
-  network: vion
   network_id: "28000"
   deposit_contract_address: "0x4242424242424242424242424242424242424242"
   num_validator_keys_per_node: 512

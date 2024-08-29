@@ -116,8 +116,7 @@ NETWORK_NAME = struct(
     sepolia="sepolia",
     holesky="holesky",
     ephemery="ephemery",
-    # kurtosis="kurtosis", # commenting to use vion
-    kurtosis="vion", # renamed to vion
+    kurtosis="kurtosis", # commenting to use vion
     verkle="verkle",
     shadowfork="shadowfork",
 )
