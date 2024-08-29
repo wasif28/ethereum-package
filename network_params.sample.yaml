@@ -2,11 +2,12 @@ parallel_keystore_generation: true
 participants:
   - el_type: geth
     cl_type: lighthouse
-    # cl_image: sheikhwasif/lighthouse:latest # if using arm64
-    cl_image: afaqahsan/lighthouse # if using amd64
-    count: 1
+    cl_image: sheikhwasif/lighthouse:latest # if using arm64
+    # cl_image: afaqahsan/lighthouse # if using amd64
+    count: 2
     # only lighthouse is configured for the custom effective balance
 network_params:
+  network: vion
   network_id: "28000"
   deposit_contract_address: "0x4242424242424242424242424242424242424242"
   num_validator_keys_per_node: 512
@@ -31,28 +32,29 @@ additional_services:
   - apache
   - dora
   # - blockscout
-# port_publisher:
-#   # Execution Layer public port exposed to your local machine
-#   # Disabled by default
-#   # Public port start defaults to 32000
-#   # You can't run multiple enclaves on the same port settings
-#   el:
-#     enabled: true
-#     public_port_start: 32000
-#   # Consensus Layer public port exposed to your local machine
-#   # Disabled by default
-#   # Public port start defaults to 33000
-#   # You can't run multiple enclaves on the same port settings
-#   cl:
-#     enabled: true
-#     public_port_start: 33000
-#   # Validator client public port exposed to your local machine
-#   # Disabled by default
-#   # Public port start defaults to 34000
-#   # You can't run multiple enclaves on the same port settings
-#   vc:
-#     enabled: true
-#     public_port_start: 34000
-#   additional_services:
-#     enabled: true
-#     public_port_start: 35000
+port_publisher:
+  nat_exit_ip: auto
+  # Execution Layer public port exposed to your local machine
+  # Disabled by default
+  # Public port start defaults to 32000
+  # You can't run multiple enclaves on the same port settings
+  el:
+    enabled: true
+    public_port_start: 32000
+  # Consensus Layer public port exposed to your local machine
+  # Disabled by default
+  # Public port start defaults to 33000
+  # You can't run multiple enclaves on the same port settings
+  cl:
+    enabled: true
+    public_port_start: 33000
+  # Validator client public port exposed to your local machine
+  # Disabled by default
+  # Public port start defaults to 34000
+  # You can't run multiple enclaves on the same port settings
+  vc:
+    enabled: true
+    public_port_start: 34000
+  additional_services:
+    enabled: true
+    public_port_start: 35000
