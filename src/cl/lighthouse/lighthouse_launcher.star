@@ -274,14 +274,14 @@ def get_beacon_config(
         "--datadir=" + BEACON_DATA_DIRPATH_ON_BEACON_SERVICE_CONTAINER,
         # vvvvvvvvvvvvvvvvvvv REMOVE THESE WHEN CONNECTING TO EXTERNAL NET vvvvvvvvvvvvvvvvvvvvv
         # "--disable-enr-auto-update",
-        "--enr-address=" + port_publisher.nat_exit_ip,
-        "--enr-udp-port={0}".format(discovery_port),
-        "--enr-tcp-port={0}".format(discovery_port),
+        # "--enr-address=" + port_publisher.nat_exit_ip,
+        # "--enr-udp-port={0}".format(discovery_port),
+        # "--enr-tcp-port={0}".format(discovery_port),
         # ^^^^^^^^^^^^^^^^^^^ REMOVE THESE WHEN CONNECTING TO EXTERNAL NET ^^^^^^^^^^^^^^^^^^^^^
         "--listen-address=0.0.0.0",
-        "--port={0}".format(
-            discovery_port
-        ),  # NOTE: Remove for connecting to external net!
+        # "--port={0}".format(
+        #     discovery_port
+        # ),  # NOTE: Remove for connecting to external net!
         "--http",
         "--http-address=0.0.0.0",
         "--http-port={0}".format(BEACON_HTTP_PORT_NUM),
