@@ -2,7 +2,7 @@ parallel_keystore_generation: true
 participants:
   - el_type: geth
     cl_type: lighthouse
-    cl_image: sheikhwasif/lighthouse:latest # if using arm64
+    # cl_image: sheikhwasif/lighthouse:latest # if using arm64
     # cl_image: afaqahsan/lighthouse # if using amd64
     count: 2
     # only lighthouse is configured for the custom effective balance
@@ -26,11 +26,13 @@ network_params:
   eip7594_fork_epoch: 1000000001
 additional_services:
   - broadcaster
-  # - tx_spammer
-  # - blob_spammer
+  - blutgang
+  - dugtrio
+  - tx_spammer
+  - blob_spammer
   - apache
   - dora
-  # - blockscout
+  - blockscout
 port_publisher:
   nat_exit_ip: auto
   # Execution Layer public port exposed to your local machine
