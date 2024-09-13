@@ -26,8 +26,6 @@ network_params:
   eip7594_fork_epoch: 1000000001
 additional_services:
   - broadcaster
-  - blutgang
-  - dugtrio
   - tx_spammer
   - blob_spammer
   - apache
