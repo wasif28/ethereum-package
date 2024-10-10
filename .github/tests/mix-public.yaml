@@ -13,7 +13,6 @@ participants:
     cl_type: teku
   - el_type: ethereumjs
     cl_type: grandine
-additional_services: []
 port_publisher:
   el:
     enabled: true
@@ -24,6 +23,9 @@ port_publisher:
   vc:
     enabled: true
     public_port_start: 34000
-  additional_services:
+  remote_signer:
     enabled: true
     public_port_start: 35000
+  additional_services:
+    enabled: true
+    public_port_start: 36000

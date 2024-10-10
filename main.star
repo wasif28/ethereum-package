@@ -165,12 +165,14 @@ def run(plan, args={}):
     all_el_contexts = []
     all_cl_contexts = []
     all_vc_contexts = []
+    all_remote_signer_contexts = []
     all_ethereum_metrics_exporter_contexts = []
     all_xatu_sentry_contexts = []
     for participant in all_participants:
         all_el_contexts.append(participant.el_context)
         all_cl_contexts.append(participant.cl_context)
         all_vc_contexts.append(participant.vc_context)
+        all_remote_signer_contexts.append(participant.remote_signer_context)
         all_ethereum_metrics_exporter_contexts.append(
             participant.ethereum_metrics_exporter_context
         )
@@ -478,7 +480,6 @@ def run(plan, args={}):
                 dora_config_template,
                 all_participants,
                 args_with_right_defaults.participants,
-                el_cl_data_files_artifact_uuid,
                 network_params,
                 dora_params,
                 global_node_selectors,
@@ -635,10 +636,12 @@ def run(plan, args={}):
             all_el_contexts,
             all_cl_contexts,
             all_vc_contexts,
+            all_remote_signer_contexts,
             prometheus_additional_metrics_jobs,
             all_ethereum_metrics_exporter_contexts,
             all_xatu_sentry_contexts,
             global_node_selectors,
+            args_with_right_defaults.prometheus_params,
         )
 
         plan.print("Launching grafana...")
@@ -648,7 +651,7 @@ def run(plan, args={}):
             grafana_dashboards_config_template,
             prometheus_private_url,
             global_node_selectors,
-            additional_dashboards=args_with_right_defaults.grafana_additional_dashboards,
+            args_with_right_defaults.grafana_params,
         )
         plan.print("Successfully launched grafana")
 

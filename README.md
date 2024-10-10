@@ -220,7 +220,7 @@ participants:
     # Resource management for el containers
     # CPU is milicores
     # RAM is in MB
-    # Defaults are set per client
+    # Defaults to 0, which results in no resource limits
     el_min_cpu: 0
     el_max_cpu: 0
     el_min_mem: 0
@@ -238,7 +238,7 @@ participants:
     # - nimbus: statusim/nimbus-eth2:multiarch-latest
     # - prysm: gcr.io/prysmaticlabs/prysm/beacon-chain:latest
     # - lodestar: chainsafe/lodestar:next
-    # - grandine: ethpandaops/grandine:develop
+    # - grandine: sifrai/grandine:stable
     cl_image: ""
 
     # The log level string that this participant's CL client should log at
@@ -278,11 +278,17 @@ participants:
     # Resource management for cl containers
     # CPU is milicores
     # RAM is in MB
-    # Defaults are set per client
+    # Defaults to 0, which results in no resource limits
     cl_min_cpu: 0
     cl_max_cpu: 0
     cl_min_mem: 0
     cl_max_mem: 0
+
+    # Whether to act as a supernode for the network
+    # Supernodes will subscribe to all subnet topics
+    # This flag should only be used with peerdas
+    # Defaults to false
+    supernode: false
 
     # Whether to use a separate validator client attached to the CL client.
     # Defaults to false for clients that can run both in one process (Teku, Nimbus)
@@ -308,7 +314,7 @@ participants:
     # Defaults to 1
     vc_count: 1
 
-    # The log level string that this participant's CL client should log at
+    # The log level string that this participant's validator client should log at
     # If this is emptystring then the global `logLevel` parameter's value will be translated into a string appropriate for the client (e.g. if
     # global `logLevel` = `info` then Teku would receive `INFO`, Prysm would receive `info`, etc.)
     # If this is not emptystring, then this value will override the global `logLevel` setting to allow for fine-grained control
@@ -318,11 +324,11 @@ participants:
     # A list of optional extra env_vars the vc container should spin up with
     vc_extra_env_vars: {}
 
-    # A list of optional extra labels that will be passed to the CL client validator container.
+    # A list of optional extra labels that will be passed to the validator client validator container.
     # Example; vc_extra_labels: {"ethereum-package.partition": "1"}
     vc_extra_labels: {}
 
-    # A list of optional extra params that will be passed to the CL client validator container for modifying its behaviour
+    # A list of optional extra params that will be passed to the validator client container for modifying its behaviour
     # If the client combines the Beacon & validator nodes (e.g. Teku, Nimbus), then this list will also be passed to the combined Beacon-validator node
     vc_extra_params: []
 
@@ -340,7 +346,7 @@ participants:
     # Resource management for vc containers
     # CPU is milicores
     # RAM is in MB
-    # Defaults are set per client
+    # Defaults to 0, which results in no resource limits
     vc_min_cpu: 0
     vc_max_cpu: 0
     vc_min_mem: 0
@@ -350,6 +356,51 @@ participants:
     # Default to null, which means that the number of validators will be using the
     # network parameter num_validator_keys_per_node
     validator_count: null
+
+    # Whether to use a remote signer instead of the vc directly handling keys
+    # Note Lighthouse VC does not support this flag
+    # Defaults to false
+    use_remote_signer: false
+
+  # Remote signer Specific flags
+    # The type of remote signer that should be used
+    # Valid values are web3signer
+    # Defaults to web3signer
+    remote_signer_type: "web3signer"
+
+    # The Docker image that should be used for the remote signer
+    # Defaults to "consensys/web3signer:latest"
+    remote_signer_image: "consensys/web3signer:latest"
+
+    # A list of optional extra env_vars the remote signer container should spin up with
+    remote_signer_extra_env_vars: {}
+
+    # A list of optional extra labels that will be passed to the remote signer container.
+    # Example; remote_signer_extra_labels: {"ethereum-package.partition": "1"}
+    remote_signer_extra_labels: {}
+
+    # A list of optional extra params that will be passed to the remote signer container for modifying its behaviour
+    remote_signer_extra_params: []
+
+    # A list of tolerations that will be passed to the remote signer container
+    # Only works with Kubernetes
+    # Example: remote_signer_tolerations:
+    # - key: "key"
+    #   operator: "Equal"
+    #   value: "value"
+    #   effect: "NoSchedule"
+    #   toleration_seconds: 3600
+    # Defaults to empty
+    remote_signer_tolerations: []
+
+    # Resource management for remote signer containers
+    # CPU is milicores
+    # RAM is in MB
+    # Defaults to 0, which results in no resource limits
+    remote_signer_min_cpu: 0
+    remote_signer_max_cpu: 0
+    remote_signer_min_mem: 0
+    remote_signer_max_mem: 0
 
   # Participant specific flags
     # Node selector
@@ -515,11 +566,11 @@ network_params:
   eip7594_fork_epoch: 100000001
 
   # The fork version to set if the eip7594 fork is active
-  eip7594_fork_version: "0x70000038"
+  eip7594_fork_version: "0x60000038"
 
   # EOF activation fork epoch (EL only fork)
-  # Defaults to null
-  eof_activation_epoch: null
+  # Defaults to None
+  eof_activation_epoch: ""
 
   # Network sync base url for syncing public networks from a custom snapshot (mostly useful for shadowforks)
   # Defaults to "https://snapshots.ethpandaops.io/"
@@ -529,13 +580,13 @@ network_params:
   network_sync_base_url: https://snapshots.ethpandaops.io/
 
   # The number of data column sidecar subnets used in the gossipsub protocol
-  data_column_sidecar_subnet_count: 32
+  data_column_sidecar_subnet_count: 128
   # Number of DataColumn random samples a node queries per slot
   samples_per_slot: 8
   # Minimum number of subnets an honest node custodies and serves samples from
-  custody_requirement: 1
-  # Suggested minimum peer count
-  target_number_of_peers: 70
+  custody_requirement: 4
+  # Maximum number of blobs per block
+  max_blobs_per_block: 6
 
   # Preset for the network
   # Default: "mainnet"
@@ -548,17 +599,31 @@ network_params:
 
   # Preloaded contracts for the chain
   additional_preloaded_contracts: {}
-  # example: To set a contract code at a certain address:
+  # Example:
+  # additional_preloaded_contracts: '{
   #  "0x123463a4B065722E99115D6c222f267d9cABb524":
-  #    balance: "1ETH"
-  #    code: "0x1234"
-  #    storage: {}
-  #    nonce: 0
-  #    secretKey: "0x"
+  #   {
+  #     balance: "1ETH",
+  #     code: "0x1234",
+  #     storage: {},
+  #     nonce: 0,
+  #     secretKey: "0x",
+  #   }
+  # }'
 
   # Repository override for devnet networks
   # Default: ethpandaops
   devnet_repo: ethpandaops
+
+  # A number of prefunded accounts to be created
+  # Defaults to no prefunded accounts
+  # Example:
+  # prefunded_accounts: '{"0x25941dC771bB64514Fc8abBce970307Fb9d477e9": {"balance": "10ETH"}}'
+  # 10ETH to the account 0x25941dC771bB64514Fc8abBce970307Fb9d477e9
+  # To prefund multiple accounts, separate them with a comma
+  #
+  # prefunded_accounts: '{"0x25941dC771bB64514Fc8abBce970307Fb9d477e9": {"balance": "10ETH"}, "0x4107be99052d895e3ee461C685b042Aa975ab5c0": {"balance": "1ETH"}}'
+  prefunded_accounts: {}
 
 # Global parameters for the network
 
@@ -608,6 +673,30 @@ goomy_blob_params:
   # A list of optional params that will be passed to the blob-spammer comamnd for modifying its behaviour
   goomy_blob_args: []
 
+# Configuration place for prometheus
+prometheus_params:
+  storage_tsdb_retention_time: "1d"
+  storage_tsdb_retention_size: "512MB"
+  # Resource management for prometheus container
+  # CPU is milicores
+  # RAM is in MB
+  min_cpu: 10
+  max_cpu: 1000
+  min_mem: 128
+  max_mem: 2048
+
+# Configuration place for grafana
+grafana_params:
+  # A list of locators for grafana dashboards to be loaded be the grafana service
+  additional_dashboards: []
+  # Resource management for grafana container
+  # CPU is milicores
+  # RAM is in MB
+  min_cpu: 10
+  max_cpu: 1000
+  min_mem: 128
+  max_mem: 2048
+
 # Configuration place for the assertoor testing tool - https://github.com/ethpandaops/assertoor
 assertoor_params:
   # Assertoor docker image to use
@@ -622,12 +711,12 @@ assertoor_params:
   # - >= 80% correct head votes
   # - no reorgs with distance > 2 blocks
   # - no more than 2 reorgs per epoch
-  run_stability_check: true
+  run_stability_check: false
 
   # Check block propöosals
   # This check monitors the chain and succeeds if:
   # - all client pairs have proposed a block
-  run_block_proposal_check: true
+  run_block_proposal_check: false
 
   # Run normal transaction test
   # This test generates random EOA transactions and checks inclusion with/from all client pairs
@@ -695,9 +784,6 @@ parallel_keystore_generation: false
 # Disable peer scoring to prevent nodes impacted by faults from being permanently ejected from the network
 # Default to false
 disable_peer_scoring: false
-
-# A list of locators for grafana dashboards to be loaded be the grafana service
-grafana_additional_dashboards: []
 
 # Whether the environment should be persistent; this is WIP and is slowly being rolled out accross services
 # Note this requires Kurtosis greater than 0.85.49 to work
@@ -836,13 +922,20 @@ port_publisher:
   vc:
     enabled: false
     public_port_start: 34000
-  # Additional services public port exposed to your local machine
+  # remote signer public port exposed to your local machine
   # Disabled by default
   # Public port start defaults to 35000
   # You can't run multiple enclaves on the same port settings
-  additional_services:
+  remote_signer:
     enabled: false
     public_port_start: 35000
+  # Additional services public port exposed to your local machine
+  # Disabled by default
+  # Public port start defaults to 36000
+  # You can't run multiple enclaves on the same port settings
+  additional_services:
+    enabled: false
+    public_port_start: 36000
 ```
 
 #### Example configurations
@@ -872,7 +965,6 @@ participants:
     cl_image: sigp/lighthouse:latest
 network_params:
   deneb_fork_epoch: 0
-additional_services: []
 wait_for_finalization: false
 wait_for_verifications: false
 global_log_level: info
@@ -903,7 +995,6 @@ participants:
     cl_image: ''
     count: 2
 mev_type: mock
-additional_services: []
 ```
 
 </details>
@@ -924,8 +1015,6 @@ participants:
 mev_type: flashbots
 network_params:
   deneb_fork_epoch: 1
-additional_services: []
-
 ```
 
 </details>
@@ -939,6 +1028,9 @@ participants:
     cl_type: lighthouse
     count: 2
 snooper_enabled: true
+additional_services:
+  - prometheus_grafana
+ethereum_metrics_exporter_enabled: true
 ```
 
 </details>
