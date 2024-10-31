@@ -2,8 +2,7 @@ parallel_keystore_generation: true
 participants:
   - el_type: besu
     cl_type: lighthouse
-    cl_image: sheikhwasif/lighthouse:latest # if using arm64
-    # cl_image: afaqahsan/lighthouse # if using amd64
+    cl_image: sheikhwasif/lighthouse:latest # for arm64 and amd64 both
     count: 3
     # only lighthouse is configured for the custom effective balance
 network_params:
